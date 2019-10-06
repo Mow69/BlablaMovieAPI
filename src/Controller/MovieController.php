@@ -6,6 +6,7 @@ use App\Repository\VoteRepository;
 use App\Service\Movie\MovieService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -30,7 +31,6 @@ class MovieController extends AbstractController
     {
         $this->serializer = $serializer;
     }
-
 
     /**
      * @Rest\Get("/movies", name="movies_list")
@@ -102,7 +102,7 @@ class MovieController extends AbstractController
 
         $finaleResponse = $movieSer->deserialise($response);
 
-        return new Response($finaleResponse);
+        return new Response($response);
     }
 
 
@@ -117,5 +117,31 @@ class MovieController extends AbstractController
 //    {
 //        $movieService = new AddMovieService
 //    }
+
+    /**
+     * @Rest\Post("/users/{user_id}/movies", name="voted_movies")
+     * @param Request $request
+     * @return mixed
+     */
+    public function postVotedMovies(Request $request)
+    {
+        $user_id = $request->get('user_id');
+        $movies_id = $request->request->get('movies');
+
+
+        // Entity Manager get Current User
+
+        foreach($movies_id as $movie_id){
+            // 1 - Entity Manager get Movie
+                // 1.1 - ATTENTION au cas : film n'existe pas
+            // 2 - Associer au film Current User comme voter
+            // 3 - Entity Manager merge/persist
+        }
+
+        // Entity Manager FLUSH
+
+
+        return new Response($movies_id);
+    }
 
 }

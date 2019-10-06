@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -81,6 +84,15 @@ class User implements UserInterface
      * @Assert\GreaterThanOrEqual("-16 years")
      */
     private $inscription_date;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Movie", inversedBy="voters")
+     */
+    private $movies;
+
+    public function __construct() {
+        $this->movies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -192,6 +204,18 @@ class User implements UserInterface
     public function setInscriptionDate(\DateTimeInterface $inscription_date): self
     {
         $this->inscription_date = $inscription_date;
+
+        return $this;
+    }
+
+    public function getMovies(): ?ArrayCollection
+    {
+        return $this->movies;
+    }
+
+    public function setMovies(ArrayCollection $movies): self
+    {
+        $this->movies = $movies;
 
         return $this;
     }
