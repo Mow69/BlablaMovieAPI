@@ -6,6 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VoteRepository")
+ * @ORM\Table(name="participations",
+uniqueConstraints={
+@ORM\UniqueConstraint(name="votes", uniqueConstraints={@ORM\UniqueConstraint(name="vote_unique", columns={"user_id", "movie_id"})
+}
+)
  */
 class Vote
 {
@@ -30,6 +35,18 @@ class Vote
      * @ORM\Column(type="datetime")
      */
     private $vote_date;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="votes")
+     */
+    private $user_id;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=Movie::class)
+     */
+    private $movie_id;
 
     public function getId(): ?int
     {
@@ -68,6 +85,30 @@ class Vote
     public function setVoteDate(\DateTimeInterface $vote_date): self
     {
         $this->vote_date = $vote_date;
+
+        return $this;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): self
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getMovieId(): ?int
+    {
+        return $this->movie_id;
+    }
+
+    public function setMovieId(int $movie_id): self
+    {
+        $this->movie_id = $movie_id;
 
         return $this;
     }

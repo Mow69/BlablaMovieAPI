@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Movie;
+use App\Entity\User;
+use App\Entity\Vote;
 use App\Repository\VoteRepository;
 use App\Service\Movie\MovieService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,37 +76,38 @@ class MovieController extends AbstractController
         ));
 
         // Exécute la session cURL fournie.
-        $response = curl_exec($curl);
+        $movies_list = curl_exec($curl);
         // Retourne un message clair représentant la dernière erreur cURL.
         $err = curl_error($curl);
 
         // Ferme une session cURL et libère toutes les ressources réservées. L'identifiant cURL ch est aussi effacé.
         curl_close($curl);
 
-        if ($err) {
-            echo "cURL Error #:" . $err;
-        } else {
-            echo $response;
-        }
-
-//        {
-//            return $this->createQueryBuilder('u')
-//                ->andWhere('u.exampleField = :val')
-//                ->setParameter('val', $value)
-//                ->orderBy('u.id', 'ASC')
-//                ->setMaxResults(10)
-//                ->getQuery()
-//                ->getResult()
-//                ;
+//        if ($err) {
+////            echo "cURL Error #:" . $err;
+////        } else {
+////            echo $movies_list;
 //        }
+
+        //dd(json_decode($movies_list));
+
+
+        $movies_array = json_decode($movies_list, true);
+        dd($movies_array[0]);
+
+
+
+
+
+
         // Il faut deserialize la response returnée
 
 
-        $movieSer = new MovieService($this->serializer);
-
-        $finaleResponse = $movieSer->deserialise($response);
-
-        return new Response($response);
+//        $movieSer = new MovieService($this->serializer);
+//
+//        $finaleResponse = $movieSer->deserialise($movies_list);
+//
+//        return new Response($movies_list);
     }
 
 
@@ -121,9 +126,10 @@ class MovieController extends AbstractController
     /**
      * @Rest\Post("/users/{user_id}/movies", name="voted_movies")
      * @param Request $request
+     * @param $entityManager
      * @return mixed
      */
-    public function postVotedMovies(Request $request)
+    public function postVotedMovies(Request $request, EntityManagerInterface $entityManager)
     {
         $user_id = $request->get('user_id');
         $movies_id = $request->request->get('movies');
@@ -131,17 +137,60 @@ class MovieController extends AbstractController
 
         // Entity Manager get Current User
 
+        // $repository = $this->getDoctrine()->getRepository(Movie::class);
+
+//        $user = new User();
+//        $user->getId();
+
+//  A vérifier :
+//        $user_idRepository = $entityManager->getRepository('User');
+//        $user_id = $user_idRepository->findAll();
+
+        $vote = new Vote();
+
+
         foreach($movies_id as $movie_id){
-            // 1 - Entity Manager get Movie
+//             1 - Entity Manager get Movie
+
+             $vote = $entityManager->find('Movie', $movie_id);
+             $vote->setMovieId(movie);
+
+
+
+
+
+//  A vérifier :
+//            $movies_idRepository = $entityManager->getRepository('Movie');
+//            $movies_id = $movies_idRepository->findAll();
+
                 // 1.1 - ATTENTION au cas : film n'existe pas
             // 2 - Associer au film Current User comme voter
+
             // 3 - Entity Manager merge/persist
+
+           // $entityManager->merge($user_id);
         }
 
+        $vote->setUserID($user_id);
+        $vote->setMovieID($movies_id);
+
+
+        $entityManager->merge(vote);
+
         // Entity Manager FLUSH
+        $entityManager->flush();
+
+
 
 
         return new Response($movies_id);
     }
+
+
+
+
+
+    // Persist un film de l'API ext vers la BDD
+
 
 }

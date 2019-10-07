@@ -85,9 +85,9 @@ class User implements UserInterface
      */
     private $inscription_date;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Movie", inversedBy="voters")
-     */
+
+      // @ORM\ManyToMany(targetEntity="Movie", inversedBy="voters")
+
     private $movies;
 
     public function __construct() {

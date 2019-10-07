@@ -42,10 +42,10 @@ class Movie
      */
     private $Poster;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="movies")
-     * @ORM\JoinTable(name="voted_movies")
-     */
+
+     // @ORM\ManyToMany(targetEntity="User", inversedBy="movies")
+     // @ORM\JoinTable(name="voted_movies")
+
     private $voters;
 
     public function __construct() {

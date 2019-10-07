@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use http\Client;
 use JMS\Serializer\Serializer;
 
 class OmdbApiService
