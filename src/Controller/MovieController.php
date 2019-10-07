@@ -93,7 +93,7 @@ class MovieController extends AbstractController
 
 
         $movies_array = json_decode($movies_list, true);
-        dd($movies_array[0]);
+        dd($movies_array['search']);
 
 
 
