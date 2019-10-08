@@ -11,6 +11,10 @@ use DateTime;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Class AddUserService
+ * @package App\Service\User
+ */
 class AddUserService
 {
     private $passwordEncoder;

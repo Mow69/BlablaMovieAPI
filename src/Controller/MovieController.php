@@ -38,7 +38,7 @@ class MovieController extends AbstractController
 
     /**
      * @Rest\Get("/movies", name="movies_list")
-     * @return Response
+     * @return JsonResponse
      */
     public function getAllSpaceMovies()
     {
@@ -54,7 +54,7 @@ class MovieController extends AbstractController
             // Le contenu des en-têtes "Accept-Encoding: " et active le décodage de la réponse. Les encodages supportés sont "identity", "deflate" et "gzip". Si une chaîne vide "" est utilisé, un en-tête contenant tous les types d'encodage supportés est envoyé.
             CURLOPT_ENCODING => "",
             // Le nombre maximal de redirections HTTP à suivre. Utilisez cette option avec l'option CURLOPT_FOLLOWLOCATION.
-            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_MAXREDIRS => 50,
             // Le temps maximum d'exécution de la fonction cURL exprimé en secondes.
             CURLOPT_TIMEOUT => 30,
             // CURL_HTTP_VERSION_NONE (défaut, laisse cURL décider la version à utiliser), CURL_HTTP_VERSION_1_0 (force HTTP/1.0), ou CURL_HTTP_VERSION_1_1 (force HTTP/1.1).
@@ -79,118 +79,42 @@ class MovieController extends AbstractController
         $movies_list = curl_exec($curl);
         // Retourne un message clair représentant la dernière erreur cURL.
         $err = curl_error($curl);
-
         // Ferme une session cURL et libère toutes les ressources réservées. L'identifiant cURL ch est aussi effacé.
         curl_close($curl);
 
-//        if ($err) {
-////            echo "cURL Error #:" . $err;
-////        } else {
-////            echo $movies_list;
+       // dd($movies_list);
+        return new JsonResponse($movies_list, 200, [], true);
+    }
+
+
+//    // methode non appelée
+//    /**
+//     * @Rest\Post("/users/{user_id}/movies", name="voted_movies")
+//     * @param Request $request
+//     * @param $entityManager
+//     * @return mixed
+//     */
+//    public function postVotedMovies(Request $request, EntityManagerInterface $entityManager)
+//    {
+//        $user_id = $request->get('user_id');
+//        $movies_id = $request->request->get('movies');
+//
+//        $vote = new Vote();
+//
+//
+//        foreach($movies_id as $movie_id){
+//
+//             $vote = $entityManager->find('Movie', $movie_id);
+//             $vote->setMovieId(movie);
+//
 //        }
-
-        //dd(json_decode($movies_list));
-
-
-        $movies_array = json_decode($movies_list, true);
-        dd($movies_array['search']);
-
-
-
-
-
-
-        // Il faut deserialize la response returnée
-
-
-//        $movieSer = new MovieService($this->serializer);
+//        $vote->setUserID($user_id);
+//        $vote->setMovieID($movies_id);
 //
-//        $finaleResponse = $movieSer->deserialise($movies_list);
-//
-//        return new Response($movies_list);
-    }
-
-
-
-//    public function getIdOmdbapi(Response $response)
-//    {
-//        $ = $response->response-> get('I')
-//        $idMovie = $this->getAllSpaceMovies($response);
+//        $entityManager->merge(vote);
+//        // Entity Manager FLUSH
+//        $entityManager->flush();
+//        return new Response($movies_id);
 //    }
-
-//    public function callMovieToDB()
-//    {
-//        $movieService = new AddMovieService
-//    }
-
-    /**
-     * @Rest\Post("/users/{user_id}/movies", name="voted_movies")
-     * @param Request $request
-     * @param $entityManager
-     * @return mixed
-     */
-    public function postVotedMovies(Request $request, EntityManagerInterface $entityManager)
-    {
-        $user_id = $request->get('user_id');
-        $movies_id = $request->request->get('movies');
-
-
-        // Entity Manager get Current User
-
-        // $repository = $this->getDoctrine()->getRepository(Movie::class);
-
-//        $user = new User();
-//        $user->getId();
-
-//  A vérifier :
-//        $user_idRepository = $entityManager->getRepository('User');
-//        $user_id = $user_idRepository->findAll();
-
-        $vote = new Vote();
-
-
-        foreach($movies_id as $movie_id){
-//             1 - Entity Manager get Movie
-
-             $vote = $entityManager->find('Movie', $movie_id);
-             $vote->setMovieId(movie);
-
-
-
-
-
-//  A vérifier :
-//            $movies_idRepository = $entityManager->getRepository('Movie');
-//            $movies_id = $movies_idRepository->findAll();
-
-                // 1.1 - ATTENTION au cas : film n'existe pas
-            // 2 - Associer au film Current User comme voter
-
-            // 3 - Entity Manager merge/persist
-
-           // $entityManager->merge($user_id);
-        }
-
-        $vote->setUserID($user_id);
-        $vote->setMovieID($movies_id);
-
-
-        $entityManager->merge(vote);
-
-        // Entity Manager FLUSH
-        $entityManager->flush();
-
-
-
-
-        return new Response($movies_id);
-    }
-
-
-
-
-
-    // Persist un film de l'API ext vers la BDD
-
 
 }

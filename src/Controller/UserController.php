@@ -72,13 +72,5 @@ class UserController extends AbstractController
 //        return new JsonResponse($this->serializer->serialize($allUsersArray, 'json'));
 //    }
 
-    /**
-     * @Rest\Post("/votation", name="votation")
-     */
-    public function votation()
-    {
-        //add an optional message - seen by developers
-        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User tried to access a page without having ROLE_USER');
 
-    }
 }

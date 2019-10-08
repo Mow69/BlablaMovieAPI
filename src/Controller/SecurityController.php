@@ -29,12 +29,12 @@ class SecurityController extends AbstractController
         if ($error === null) {
             return new JsonResponse($lastUsername);
         }
-
         return new JsonResponse($error);
     }
 
     /**
      * @Route("/logout", name="app_logout")
+     * @throws \Exception
      */
     public function logout()
     {

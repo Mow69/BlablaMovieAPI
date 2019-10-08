@@ -18,6 +18,10 @@ class OmdbApiService
         $this->apiKey = $apiKey;
     }
 
+    /**
+     * @param $movie_title
+     * @return array
+     */
     public function getCurrent($movie_title)
     {
         $uri = 'http://www.omdbapi.com/?apikey=' . $this->apiKey . '&t=' . $movie_title;
