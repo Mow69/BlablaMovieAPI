@@ -59,7 +59,7 @@ class AddUserService
              */
             $errorsString = (string)$errors;
 
-            return new Response($errorsString);
+            return $errorsString;
         }
 
         /* you can fetch the EntityManager via $this->getDoctrine()->getManager() or you can add an argument to the action: addUser(EntityManagerInterface $entityManager)
@@ -69,6 +69,6 @@ class AddUserService
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new JsonResponse($serializer->customUserSerializer()->serialize($user, 'json'));
+        return $user;
     }
 }

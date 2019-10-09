@@ -57,7 +57,9 @@ class UserController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder)
     {
         $userService = new AddUserService($passwordEncoder);
-        return $userService->addUser($request, $validator, $entityManager);
+        $addUser = $userService->addUser($request, $validator, $entityManager);
+
+        return new JsonResponse($this->serializer->serialize($addUser, 'json'), 200, [], true);
     }
 
 //    /**

@@ -2,7 +2,8 @@
 
 namespace App\Security;
 
-use App\Entity\Movie;
+
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,14 +30,15 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     private $entityManager;
     private $urlGenerator;
-    private $csrfTokenManager;
+    //private $csrfTokenManager;
     private $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    //CsrfTokenManagerInterface $csrfTokenManager comme paramètre du constructeur en cas de formulaire
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
+        //$this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
     }
 
@@ -64,7 +66,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $credentials = [
             'mail' => $request->request->get('mail'),
             'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
+            //'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -76,19 +78,18 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
+//        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+//        if (!$this->csrfTokenManager->isTokenValid($token)) {
+//            throw new InvalidCsrfTokenException();
+//        }
 
-        $user = $this->entityManager->getRepository(Movie::class)->findOneBy(['mail' => $credentials['mail']]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['mail' => $credentials['mail']]);
 
         if (!$user) {
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Mail could not be found.');
         }
         // if a User object, checkCredentials() is called
-
         return $user;
     }
 

@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,10 +16,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const SERIALIZE_SELF = "User::GROUP_SELF";
+    const SERIALIZE_VOTES = "User::GROUP_VOTES";
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"User::GROUP_SELF"})
      */
     private $id;
 
@@ -36,11 +41,13 @@ class User implements UserInterface
      *      maxMessage = "Your first name cannot be longer than {{ limit }} characters"
      * )
      * @Assert\Regex("#[A-Z0-9]#")
+     * @Groups({"User::GROUP_SELF"})
      */
     private $login;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"User::GROUP_SELF"})
      */
     private $roles = [];
 
@@ -64,6 +71,7 @@ class User implements UserInterface
      * @Assert\NotBlank(message="The email must be defined.")
      * @Assert\NotNull(message="The email can't be null.")
      * @Assert\Email(message="The email '{{ value }}' is not a valid email.")
+     * @Groups({"User::GROUP_SELF"})
      */
     private $mail;
 
@@ -73,6 +81,7 @@ class User implements UserInterface
      * @Assert\NotNull(message="The date of birth can't be null.")
      * @Assert\Date
      * @var string A "Y-m-d" formatted value
+     * @Groups({"User::GROUP_SELF"})
      */
     private $birth_date;
 
@@ -83,18 +92,17 @@ class User implements UserInterface
      * @Assert\Date
      * @var string A "Y-m-d" formatted value
      * @Assert\GreaterThanOrEqual("-16 years")
+     * @Groups({"User::GROUP_SELF"})
      */
     private $inscription_date;
 
-
-      // @ORM\ManyToMany(targetEntity="Movie", inversedBy="voters")
-
-    private $movies;
-
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="voter")
+     * @Groups({"User::GROUP_VOTES"})
      */
     private $votes;
+
+
 
     public function __construct() {
         $this->movies = new ArrayCollection();
@@ -215,18 +223,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getMovies(): ?ArrayCollection
-    {
-        return $this->movies;
-    }
-
-    public function setMovies(ArrayCollection $movies): self
-    {
-        $this->movies = $movies;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Vote[]
      */
@@ -239,7 +235,7 @@ class User implements UserInterface
     {
         if (!$this->votes->contains($vote)) {
             $this->votes[] = $vote;
-            $vote->setUserId($this);
+            $vote->setVoter($this);
         }
 
         return $this;
@@ -250,11 +246,12 @@ class User implements UserInterface
         if ($this->votes->contains($vote)) {
             $this->votes->removeElement($vote);
             // set the owning side to null (unless already changed)
-            if ($vote->getUserId() === $this) {
-                $vote->setUserId(null);
+            if ($vote->getVoter() === $this) {
+                $vote->setVoter(null);
             }
         }
 
         return $this;
     }
+
 }

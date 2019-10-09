@@ -36,11 +36,11 @@ class AddVoteService
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param $maurice
+     * @param $utilisateur
      * @return Vote|string
      * @throws \Exception
      */
-    public function addVote(EntityManagerInterface $entityManager, $maurice)
+    public function addVote(EntityManagerInterface $entityManager, $utilisateur)
     {
         $vote = new Vote();
 
@@ -52,8 +52,7 @@ class AddVoteService
 
 
         // TODO : recuperer l'id de l'user connecté
-        $vote->setUser($maurice);
-
+        $vote->setVoter($utilisateur);
 
 
         $errors = $this->validator->validate($vote);
@@ -85,9 +84,9 @@ class AddVoteService
 //        $movie_id = $movieRepo->find(id);
 //
 //        $userRepo = $entityManager->getRepository(User::class);
-//        $user_id = $userRepo->find(id);
+//        $user = $userRepo->find(id);
 //
-//        $vote->setUser($user_id);
+//        $vote->setUser($user);
 //        $vote->setMovie($movie_id);
 //
 //        $entityManager->persist($vote);
