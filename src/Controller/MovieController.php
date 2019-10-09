@@ -55,7 +55,7 @@ class MovieController extends AbstractController
     }
     
     
-
+// Fonction qui retourneLeVoteCreeVersLeFront
     /**
      * @Rest\Post("/movies/vote", name="voted_movies")
      * @param EntityManagerInterface $entityManager
@@ -64,7 +64,7 @@ class MovieController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function retourneLeVoteCreeVersLeFront(EntityManagerInterface $entityManager, Request $request, ValidatorInterface $validator)
+    public function voteAction(EntityManagerInterface $entityManager, Request $request, ValidatorInterface $validator)
     {
         $voteService = new AddVoteService($request, $validator);
 
