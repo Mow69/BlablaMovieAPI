@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\Vote\AddVoteService;
+use App\Service\Vote\VoteService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

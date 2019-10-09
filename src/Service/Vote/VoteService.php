@@ -12,19 +12,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
-class AddVoteService
+class VoteService
 {
     /**
      * @var Request
      */
     private $request;
+
     /**
      * @var ValidatorInterface
      */
     private $validator;
 
     /**
-     * AddVoteService constructor.
+     * VoteService constructor.
      * @param Request $request
      * @param ValidatorInterface $validator
      */
@@ -36,25 +37,24 @@ class AddVoteService
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param $utilisateur
+     * @param $connectedUser
+     * @param $imdbID
      * @return Vote|string
      * @throws \Exception
      */
-    public function addVote(EntityManagerInterface $entityManager, $utilisateur)
+    public function addVote(EntityManagerInterface $entityManager, $connectedUser, $imdbID)
     {
         $vote = new Vote();
-
-        $movie_id = $this->request->request->get('imdbID');
-        $vote->setMovieId($movie_id);
-
-
+        $vote->setVoter($connectedUser);
+        $vote->setMovieId($imdbID);
         $vote->setVoteDate(new DateTime());
 
+        $entityManager->persist($vote);
+        $entityManager->flush();
 
-        // TODO : recuperer l'id de l'user connecté
-        $vote->setVoter($utilisateur);
+        return $vote;
 
-
+/////// a remettre avant le persist quand j'aurais mis les assets aux attributs de vote entity
         $errors = $this->validator->validate($vote);
         if (count($errors) > 0) {
             /*
@@ -64,11 +64,6 @@ class AddVoteService
 
             return $errorsString;
         }
-        $entityManager->persist($vote);
-        // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();
-
-        return $vote;
     }
 
 

@@ -12,10 +12,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Class AddUserService
+ * Class UserService
  * @package App\Service\User
  */
-class AddUserService
+class UserService
 {
     private $passwordEncoder;
 

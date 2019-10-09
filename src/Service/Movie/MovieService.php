@@ -3,28 +3,49 @@
 
 namespace App\Service\Movie;
 
-
-use App\Controller\MovieController;
-use App\Model\Movie;
+use App\Entity\Vote;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use DateTime;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MovieService
 {
-    private $serializer;
 
 
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
-    }
-
-
-    final public function deserialise($response)
+    public function addMovie(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
 
-        $this->response = $response;
-        $desresponse = $this->serializer->deserialize($response, Movie::class,'json');
-        return $desresponse;
+        $movie= new Vote();
+
+
+        $movie_title = $request->request->get('movie_title');
+        $movie_title->setTitle($movie_title);
+
+
+//        $birthDate = new DateTime($request->request->get('birth_date'));
+//        $movie->setBirthDate($birthDate);
+
+
+        $errors = $validator->validate($movie);
+        if (count($errors) > 0) {
+            /*
+             * Uses a __toString method on the $errors variable which is a ConstraintViolationList object. This gives us a nice string for debugging.
+             */
+            $errorsString = (string)$errors;
+
+            return new Response($errorsString);
+        }
+
+        /* you can fetch the EntityManager via $this->getDoctrine()->getManager() or you can add an argument to the action: addUser(EntityManagerInterface $entityManager)
+        */
+        // tell Doctrine you want to (eventually) save the user (no queries yet)
+        $entityManager->persist($movie);
+        // actually executes the queries (i.e. the INSERT query)
+        $entityManager->flush();
+
+        return new JsonResponse($movie, 'json');
     }
 }

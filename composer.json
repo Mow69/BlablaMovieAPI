@@ -35,7 +35,8 @@
         "symfony/web-server-bundle": "4.3.*",
         "symfony/yaml": "4.3.*",
         "ext-http": "*",
-      "ext-cassandra": "*"
+      "ext-cassandra": "*",
+      "ext-json": "*"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
