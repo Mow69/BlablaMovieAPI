@@ -76,7 +76,7 @@ class MovieController extends AbstractController
         // if not empty, movie vote already exists, SO throw error
         if(!empty($movieVote)){
             return new JsonResponse(
-                'Action non autorisé, vous avez déjà voté pour CE film',
+                'Action non autorisée, vous avez déjà voté pour CE film',
                 405,
                 [],
                 true
@@ -111,7 +111,7 @@ class MovieController extends AbstractController
             }
             // IF MOVIE NOT EXIST
             return new JsonResponse(
-                "Action non autorisé, le film n'existe pas",
+                "Action non autorisée, le film n'existe pas",
                 405,
                 [],
                 true
@@ -119,7 +119,7 @@ class MovieController extends AbstractController
         } else {
             // IF NUMBER OF MOVIES > 3
             return new JsonResponse(
-                'Action non autorisé, vous avez déjà voté pour 3 films',
+                'Action non autorisée, vous avez déjà voté pour 3 films',
                 405,
                 [],
                 true
