@@ -24,7 +24,7 @@ class OmdbApiService
      */
     public function checkIfAMovieExistsById($id)
     {
-        $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&i=".$id);
+        $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&i=" . $id);
         $responseJSON = json_decode($response, true);
         $exists = $responseJSON['Response']=='True'?true:false;
         return $exists;

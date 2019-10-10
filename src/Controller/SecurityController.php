@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -40,4 +42,32 @@ class SecurityController extends AbstractController
     {
         throw new \Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
     }
+
+
+
+
+//    /**
+//     * @Rest\Post("/users/delete", name="delete_user")
+//     * @param $id
+//     * @return RedirectResponse
+//     */
+//    public function deleteUser()
+//    {
+//        $user = $this->getUser();
+//        $userId = $user->getID();
+//
+//        $entityManager = $this->getDoctrine()->getManager();
+//        $usrRepo = $entityManager->getRepository(User::class);
+//
+//        $user = $usrRepo->find($id);
+//        $entityManager->remove($user);
+//        $entityManager->flush();
+//
+//
+//        return  JsonResponse();
+//       // return $this->redirectToRoute('accueil');
+//
+//
+//    }
+
 }

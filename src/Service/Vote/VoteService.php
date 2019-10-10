@@ -49,12 +49,6 @@ class VoteService
         $vote->setMovieId($imdbID);
         $vote->setVoteDate(new DateTime());
 
-        $entityManager->persist($vote);
-        $entityManager->flush();
-
-        return $vote;
-
-/////// a remettre avant le persist quand j'aurais mis les assets aux attributs de vote entity
         $errors = $this->validator->validate($vote);
         if (count($errors) > 0) {
             /*
@@ -64,6 +58,14 @@ class VoteService
 
             return $errorsString;
         }
+
+
+        $entityManager->persist($vote);
+        $entityManager->flush();
+
+        return $vote;
+
+
     }
 
 

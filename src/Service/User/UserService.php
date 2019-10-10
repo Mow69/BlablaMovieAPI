@@ -3,6 +3,8 @@
 namespace App\Service\User;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +19,27 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class UserService
 {
+    /**
+     * @var UserPasswordEncoderInterface
+     */
     private $passwordEncoder;
 
+    /**
+     * UserService constructor.
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     */
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
     }
 
+    /**
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param EntityManagerInterface $entityManager
+     * @return User|string
+     * @throws \Exception
+     */
     public function addUser(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
 
@@ -71,4 +87,32 @@ class UserService
 
         return $user;
     }
+
+    /**
+     * @param User $connectedUser
+     * @param EntityManagerInterface $entityManager
+     * @param ManagerRegistry $registry
+     * @return void
+     */
+    public function removeUser($connectedUser, EntityManagerInterface $entityManager, ManagerRegistry $registry): void
+    {
+        $userId = $connectedUser->getId();
+
+        // $removeUser = $userId->remove($userId);
+//  ????????
+        $userRepo = new UserRepository($registry);
+
+        $connectedUser = $userRepo->findByUserId($userId);
+
+        dd($userId);
+
+        $entityManager->remove($connectedUser);
+        $entityManager->flush();
+
+        return $connectedUser;
+        // return $this->redirectToRoute('accueil');
+
+    }
+
+
 }

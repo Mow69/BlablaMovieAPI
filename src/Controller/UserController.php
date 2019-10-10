@@ -49,6 +49,7 @@ class UserController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
+     * @throws \Exception
      */
     public function createNewUser(
         Request $request,
@@ -60,6 +61,21 @@ class UserController extends AbstractController
         $addUser = $userService->addUser($request, $validator, $entityManager);
 
         return new JsonResponse($this->serializer->serialize($addUser, 'json'), 200, [], true);
+    }
+
+    /**
+     * @Rest\Post("/users/delete", name="delete_user")
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return JsonResponse
+     */
+    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
+    {
+        $userService = new UserService($passwordEncoder);
+        $getUser = $this->getUser();
+        $removeUser = $userService->removeUser($getUser, $entityManager);
+
+        return new JsonResponse($removeUser, 200, [], true);
+
     }
 
 //    /**

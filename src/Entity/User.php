@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -18,6 +19,11 @@ class User implements UserInterface
 {
     const SERIALIZE_SELF = "User::GROUP_SELF";
     const SERIALIZE_VOTES = "User::GROUP_VOTES";
+//      Vérifie que l'adresse email entrée est bien valide (existe bien)
+//    public static function loadValidatorMetadata(ClassMetadata $metadata)
+//    {
+//        $metadata->addPropertyConstraint('mail', new Assert\Valid());
+//    }
 
     /**
      * @ORM\Id()
