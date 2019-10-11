@@ -5,44 +5,50 @@ namespace App\Service\Vote;
 
 use App\Entity\User;
 use App\Entity\Vote;
+use App\Repository\UserRepository;
+use App\Repository\VoteRepository;
 use DateTime;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Security\LoginFormAuthenticator;
 
 
 class VoteService
 {
-    /**
-     * @var Request
-     */
-    private $request;
 
     /**
      * @var ValidatorInterface
      */
     private $validator;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+
 
     /**
      * VoteService constructor.
-     * @param Request $request
      * @param ValidatorInterface $validator
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Request $request, ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
-        $this->request = $request;
         $this->validator = $validator;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
      * @param $connectedUser
      * @param $imdbID
      * @return Vote|string
      * @throws \Exception
      */
-    public function addVote(EntityManagerInterface $entityManager, $connectedUser, $imdbID)
+    public function addVote($connectedUser, $imdbID)
     {
         $vote = new Vote();
         $vote->setVoter($connectedUser);
@@ -60,13 +66,58 @@ class VoteService
         }
 
 
-        $entityManager->persist($vote);
-        $entityManager->flush();
+        $this->entityManager->persist($vote);
+        $this->entityManager->flush();
 
         return $vote;
 
 
     }
+
+
+    public function deleteAllVotesForCurrentUser(UserInterface $currentUser, VoteRepository $voteRepository)
+    {
+        $currentUserId = $currentUser->getId();
+
+        $getVotesOfCurrentUser = $voteRepository->findByVoterId($currentUserId);
+
+        // dd($getVotesOfCurrentUser);
+
+        foreach ($getVotesOfCurrentUser as $voteItem)
+        {
+            $this->entityManager->remove($voteItem);
+            $this->entityManager->flush();
+        }
+
+        return $getVotesOfCurrentUser;
+
+    }
+
+    public function deleteVote()
+    {
+        
+    }
+
+
+//    public function removeVote($existingVote, EntityManagerInterface $entityManager, ManagerRegistry $registry)
+//    {
+//        $vote = $existingVote->getVote();
+//
+//        // $removeUser = $userId->remove($userId);
+////  ????????
+//        $voteRepo = new VoteRepository($registry);
+//
+//        $existingVote = $voteRepo->find($vote);
+//
+//        // dd($userId);
+//
+//        $entityManager->remove($existingVote);
+//        $entityManager->flush();
+//
+//        return $existingVote;
+//        // return $this->redirectToRoute('accueil');
+
+//    }
 
 
 

@@ -23,14 +23,26 @@ class UserService
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
      * UserService constructor.
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, EntityManagerInterface $entityManager)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -40,7 +52,7 @@ class UserService
      * @return User|string
      * @throws \Exception
      */
-    public function addUser(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager)
+    public function addUser(Request $request, ValidatorInterface $validator, \Doctrine\ORM\EntityManagerInterface $entityManager)
     {
 
         $serializer = new CustomUserSerializer();
@@ -81,33 +93,28 @@ class UserService
         /* you can fetch the EntityManager via $this->getDoctrine()->getManager() or you can add an argument to the action: addUser(EntityManagerInterface $entityManager)
         */
         // tell Doctrine you want to (eventually) save the user (no queries yet)
-        $entityManager->persist($user);
+        $this->entityManager->persist($user);
         // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         return $user;
     }
 
     /**
-     * @param User $connectedUser
-     * @param EntityManagerInterface $entityManager
-     * @param ManagerRegistry $registry
-     * @return void
+     * @param $id
+     * @return User|User[]
      */
-    public function removeUser($connectedUser, EntityManagerInterface $entityManager, ManagerRegistry $registry): void
+    public function removeUser($id)
     {
-        $userId = $connectedUser->getId();
-
         // $removeUser = $userId->remove($userId);
 //  ????????
-        $userRepo = new UserRepository($registry);
 
-        $connectedUser = $userRepo->findByUserId($userId);
+        $connectedUser = $this->userRepository->find($id);
 
-        dd($userId);
+        // dd($userId);
 
-        $entityManager->remove($connectedUser);
-        $entityManager->flush();
+        $this->entityManager->remove($connectedUser);
+        $this->entityManager->flush();
 
         return $connectedUser;
         // return $this->redirectToRoute('accueil');

@@ -3,12 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Vote;
 use App\Repository\UserRepository;
+use App\Repository\VoteRepository;
 use App\Service\User\UserService;
+use App\Service\Vote\VoteService;
 use Cassandra\Type\UserType;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,15 +24,30 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
+    /**
+     * @var SerializerInterface
+     */
     private $serializer;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * @var VoteRepository
+     */
+    private $voteRepository;
 
     /**
      * UserController constructor.
-     * @param $serializer
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $entityManager
+     * @param VoteRepository $voteRepository
      */
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager, VoteRepository $voteRepository)
     {
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
+        $this->voteRepository = $voteRepository;
     }
 
     /**
@@ -46,37 +66,80 @@ class UserController extends AbstractController
      * @Rest\Post("/users/add")
      * @param Request $request
      * @param ValidatorInterface $validator
-     * @param EntityManagerInterface $entityManager
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      * @throws \Exception
      */
     public function createNewUser(
         Request $request,
         ValidatorInterface $validator,
-        EntityManagerInterface $entityManager,
-        UserPasswordEncoderInterface $passwordEncoder)
+        UserPasswordEncoderInterface $passwordEncoder,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager)
     {
-        $userService = new UserService($passwordEncoder);
+        $userService = new UserService($passwordEncoder, $userRepository, $entityManager);
         $addUser = $userService->addUser($request, $validator, $entityManager);
 
         return new JsonResponse($this->serializer->serialize($addUser, 'json'), 200, [], true);
     }
 
+
     /**
      * @Rest\Post("/users/delete", name="delete_user")
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
+     * @param VoteService $voteService
+     * @param UserInterface $currentUser
      * @return JsonResponse
      */
-    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
+    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository,EntityManagerInterface $entityManager, VoteService $voteService, UserInterface $currentUser)
     {
-        $userService = new UserService($passwordEncoder);
-        $getUser = $this->getUser();
-        $removeUser = $userService->removeUser($getUser, $entityManager);
+        $userService = new UserService($passwordEncoder, $userRepository, $entityManager);
+        $user = $this->getUser();
+    //        $userId = $currentUser->getId();
+        // $deleteVotes = $voteService->deleteAllVotesForCurrentUser($this->voteRepository);
 
-        return new JsonResponse($removeUser, 200, [], true);
+        $voteService->deleteAllVotesForCurrentUser($currentUser, $this->voteRepository);
+
+
+        $removeUser = $userService->removeUser($user);
+        //dd($removeUser);
+        return new JsonResponse($this->serializer->serialize($removeUser, 'json'), 200, [], true);
 
     }
+
+
+
+
+
+
+//    /**
+//     * @Rest\Post("/votes/delete", name="delete_votes")
+//     * @return JsonResponse
+//     */
+//    public function deleteAllVotesForCurrentUser()
+//    {
+//        $currentUser = $this->getUser();
+//        $currentUserId = $currentUser->getId();
+//
+//        $getVotesOfCurrentUser = $this->voteRepository->findByVoterId($currentUserId);
+//
+//        // dd($getVotesOfCurrentUser);
+//
+//        foreach ($getVotesOfCurrentUser as $voteItem)
+//        {
+//            $this->entityManager->remove($voteItem);
+//            $this->entityManager->flush();
+//        }
+//
+//        return new JsonResponse($this->serializer->serialize($getVotesOfCurrentUser, 'json'), 200, [], true);
+//
+//    }
+
+
 
 //    /**
 //     * @Rest\Get("/users", name="users_list")

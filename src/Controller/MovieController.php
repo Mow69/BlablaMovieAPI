@@ -126,26 +126,15 @@ class MovieController extends AbstractController
             );
         }
 
-        /*$voteService = new VoteService($request, $validator);
-
-        $vote = $voteService->addVote($entityManager, $this->getUser());
-
-        return new JsonResponse($this->serializer->serialize(
-            $vote,
-            "json",
-            [
-                "groups"=>[
-                    Vote::SERIALIZE_SELF,
-                    Vote::SERIALIZE_VOTER,
-                    User::SERIALIZE_SELF,
-                ]
-            ]
-        ),
-            200,
-            [],
-            true);*/
     }
 
+
+    public function removeVote()
+    {
+        $voteService = new VoteService();
+        $vote = $this->getAllVotedMovies();
+
+    }
 
 //    // methode non appelée
 //    /**
