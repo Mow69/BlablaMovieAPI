@@ -2,23 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\Vote;
 use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
 use App\Service\User\UserService;
 use App\Service\Vote\VoteService;
 use Cassandra\Type\UserType;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use FOS\RestBundle\Controller\Annotations as Rest;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -87,7 +84,7 @@ class UserController extends AbstractController
 
 
     /**
-     * @Rest\Post("/users/delete", name="delete_user")
+     * @Rest\Delete("/users/delete", name="delete_user")
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param UserRepository $userRepository
      * @param EntityManagerInterface $entityManager
@@ -95,11 +92,11 @@ class UserController extends AbstractController
      * @param UserInterface $currentUser
      * @return JsonResponse
      */
-    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository,EntityManagerInterface $entityManager, VoteService $voteService, UserInterface $currentUser)
+    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, EntityManagerInterface $entityManager, VoteService $voteService, UserInterface $currentUser)
     {
         $userService = new UserService($passwordEncoder, $userRepository, $entityManager);
         $user = $this->getUser();
-    //        $userId = $currentUser->getId();
+        //        $userId = $currentUser->getId();
         // $deleteVotes = $voteService->deleteAllVotesForCurrentUser($this->voteRepository);
 
         $voteService->deleteAllVotesForCurrentUser($currentUser, $this->voteRepository);
@@ -138,7 +135,6 @@ class UserController extends AbstractController
 //        return new JsonResponse($this->serializer->serialize($getVotesOfCurrentUser, 'json'), 200, [], true);
 //
 //    }
-
 
 
 //    /**

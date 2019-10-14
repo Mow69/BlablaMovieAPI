@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Vote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
 
 /**
  * @method Vote|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,8 +21,8 @@ class VoteRepository extends ServiceEntityRepository
     }
 
 
-
     /**
+     * @param $currentUserId
      * @return Vote[] Returns an array of Vote objects
      */
 
@@ -35,6 +36,20 @@ class VoteRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    /**
+     * @param $voteId
+     * @return Vote|null
+     * @throws NonUniqueResultException
+     */
+    public function findOneVoteByVoteIdAndVoterId($voteId): ?Vote
+    {
+            return $this->createQueryBuilder('v')
+                ->andWhere('v.id = :val')
+                ->setParameter('val', $voteId)
+                ->getQuery()
+                ->getOneOrNullResult();
     }
 
 

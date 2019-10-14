@@ -23,7 +23,7 @@ class Vote
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="votes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"Vote::GROUP_VOTER"})
      */
     private $voter;

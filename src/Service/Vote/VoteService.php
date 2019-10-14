@@ -3,18 +3,13 @@
 
 namespace App\Service\Vote;
 
-use App\Entity\User;
 use App\Entity\Vote;
-use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
 use DateTime;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Security\LoginFormAuthenticator;
 
 
 class VoteService
@@ -28,7 +23,6 @@ class VoteService
      * @var EntityManagerInterface
      */
     private $entityManager;
-
 
 
     /**
@@ -74,7 +68,11 @@ class VoteService
 
     }
 
-
+    /**
+     * @param UserInterface $currentUser
+     * @param VoteRepository $voteRepository
+     * @return Vote[]
+     */
     public function deleteAllVotesForCurrentUser(UserInterface $currentUser, VoteRepository $voteRepository)
     {
         $currentUserId = $currentUser->getId();
@@ -83,8 +81,7 @@ class VoteService
 
         // dd($getVotesOfCurrentUser);
 
-        foreach ($getVotesOfCurrentUser as $voteItem)
-        {
+        foreach ($getVotesOfCurrentUser as $voteItem) {
             $this->entityManager->remove($voteItem);
             $this->entityManager->flush();
         }
@@ -93,10 +90,27 @@ class VoteService
 
     }
 
-    public function deleteVote()
+    /**
+     * @param int $voteId
+     * @param VoteRepository $voteRepository
+     * @return Vote|null
+     * @throws NonUniqueResultException
+     */
+    public function deleteVote(int $voteId, VoteRepository $voteRepository)
     {
-        
+        $vote = $voteRepository->findOneVoteByVoteId($voteId);
+
+
+        $this->entityManager->remove($vote);
+        $this->entityManager->flush();
+
+        return $vote;
     }
+
+//    public function getCurrentVotes(Request $request)
+//    {
+//        $currentVote = $request->request(vote_id);
+//    }
 
 
 //    public function removeVote($existingVote, EntityManagerInterface $entityManager, ManagerRegistry $registry)
@@ -118,7 +132,6 @@ class VoteService
 //        // return $this->redirectToRoute('accueil');
 
 //    }
-
 
 
 // methode non appelée

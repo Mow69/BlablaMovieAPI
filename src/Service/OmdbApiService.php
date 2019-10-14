@@ -2,11 +2,6 @@
 
 namespace App\Service;
 
-use http\Client;
-use JMS\Serializer\Serializer;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-
 class OmdbApiService
 {
 
@@ -26,11 +21,12 @@ class OmdbApiService
     {
         $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&i=" . $id);
         $responseJSON = json_decode($response, true);
-        $exists = $responseJSON['Response']=='True'?true:false;
+        $exists = $responseJSON['Response'] == 'True' ? true : false;
         return $exists;
     }
 
-    private function callAPI($type, $url){
+    private function callAPI($type, $url)
+    {
         // Initialise une nouvelle session cURL et retourne un identifiant de session cURL à utiliser avec les fonctions curl_setopt(), curl_exec() et curl_close().
         $curl = curl_init();
         // Définit une option de transmission pour le gestionnaire de session cURL fournit.

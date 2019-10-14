@@ -247,6 +247,10 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @param Vote $vote
+     * @return $this
+     */
     public function removeVote(Vote $vote): self
     {
         if ($this->votes->contains($vote)) {
