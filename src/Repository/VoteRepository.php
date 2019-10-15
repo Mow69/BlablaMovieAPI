@@ -40,14 +40,16 @@ class VoteRepository extends ServiceEntityRepository
 
     /**
      * @param $voteId
+     * @param $voterId
      * @return Vote|null
      * @throws NonUniqueResultException
      */
-    public function findOneVoteByVoteIdAndVoterId($voteId): ?Vote
+    public function findOneVoteByVoteIdAndVoterId($voteId, $voterId): ?Vote
     {
             return $this->createQueryBuilder('v')
-                ->andWhere('v.id = :val')
-                ->setParameter('val', $voteId)
+                ->andWhere('v.id = :val1', 'v.voter = :val2')
+                ->setParameter('val1', $voteId)
+                ->setParameter('val2',  $voterId)
                 ->getQuery()
                 ->getOneOrNullResult();
     }

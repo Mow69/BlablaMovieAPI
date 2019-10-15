@@ -8,6 +8,7 @@ use App\Repository\VoteRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -90,22 +91,100 @@ class VoteService
 
     }
 
+
     /**
-     * @param int $voteId
-     * @param VoteRepository $voteRepository
-     * @return Vote|null
-     * @throws NonUniqueResultException
+     * @return false|string
+     * @throws \Exception
      */
-    public function deleteVote(int $voteId, VoteRepository $voteRepository)
+    public function currentWeekNum()
     {
-        $vote = $voteRepository->findOneVoteByVoteId($voteId);
+        //$weekNum = count(day);
 
+//        $month = 10;
+//        $year = 2019;
+//        echo "Week #'s in October 2019: ";
+//        $week_num_correction = strftime('%U', mktime(0, 0, 0, 1, 1, $year)) === '00' ? 1 : 0;
+//        $week_numbers = range(strftime('%U', mktime(0, 0, 0, $month, 1, $year)) + $week_num_correction, strftime('%U', mktime(0, 0, 0, $month + 1, 0, $year)) + $week_num_correction);
+//        foreach ($week_numbers as $week_number) return $week_number;
 
-        $this->entityManager->remove($vote);
-        $this->entityManager->flush();
+        //$date = date('W',('19-01-01'));
+      //  $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
 
-        return $vote;
+        $date = new DateTime();
+        $formated_date = $date->format('Y-m-d');
+        $dateStrToTime = strtotime($formated_date);
+        $ourWeekNum = date('W', $dateStrToTime);
+        $ourDayNumOfWeek = date('w', $dateStrToTime);
+        
+        return $ourWeekNum;
     }
+
+    /**
+     * @return false|string
+     * @throws \Exception
+     */
+    public function currentDayNumOfWeek()
+    {
+
+
+        $date = new DateTime();
+        $formated_date = $date->format('Y-m-d');
+        $dateStrToTime = strtotime($formated_date);
+        $ourDayNumOfWeek = date('w', $dateStrToTime);
+
+        return $ourDayNumOfWeek;
+    }
+
+    public function firstDayOfWeek()
+    {
+//        $date = new DateTime();
+//        $formated_date = $date->format('Y-m-d');
+
+
+        $day = date('w');
+
+        $firstDay = date('Y-m-d', strtotime('+'.(1-$day).'day'));
+        $lastdDay = date('Y-m-d', strtotime('+'.(7-$day).'day'));
+
+
+        return $firstDay;
+    }
+
+    public function dayComparaison()
+    {
+        $firstDayOfWeek = $this->firstDayOfWeek();
+
+        $dateTime = new DateTime();
+        $currentDayNumOfWeek = $this->currentDayNumOfWeek();
+
+        $comparaisonDaysNumBtwNowAndMonday = ($firstDayOfWeek - $currentDayNumOfWeek);
+
+        if($comparaisonDaysNumBtwNowAndMonday > 1)
+        {
+
+        };
+
+    }
+
+
+//      Méthode non utilisée car le Controller appelle une méthode du Repository
+//    /**
+//     * @param int $voteId
+//     * @param int $voterId
+//     * @param VoteRepository $voteRepository
+//     * @return Vote|null
+//     * @throws NonUniqueResultException
+//     */
+//    public function deleteVote(int $voteId, int $voterId, VoteRepository $voteRepository)
+//    {
+//        $vote = $voteRepository->findOneVoteByVoteIdAndVoterId($voteId, $voterId);
+//
+//
+//        $this->entityManager->remove($vote);
+//        $this->entityManager->flush();
+//
+//        return $vote;
+//    }
 
 //    public function getCurrentVotes(Request $request)
 //    {

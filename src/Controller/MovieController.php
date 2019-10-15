@@ -144,20 +144,40 @@ class MovieController extends AbstractController
      * @param VoteService $voteService
      * @param Request $request
      * @param VoteRepository $voteRepository
+     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      * @throws NonUniqueResultException
      */
-    public function removeVote(VoteService $voteService, Request $request, VoteRepository $voteRepository)
+    public function removeVote(VoteService $voteService, Request $request, VoteRepository $voteRepository, EntityManagerInterface $entityManager)
     {
         $voteId = $request->headers->get('id');
 
+        $voter = $this->getUser();
+        $voterId = $voter->getId();
 
         // TESTER en retravaillant cette ligne pour l'adapter si àa marche à sécuriser la suppression d'un vote sans toucher le vote d'un autre voter que celui connecté.
 
-//        $movieVote = $entityManager->getRepository('App\Entity\Vote')->findOneBy(['voter' => $connectedUser, 'movie_id' => $imdbID]);
+        $vote = $voteRepository->findOneVoteByVoteIdAndVoterId($voteId, $voterId);
 
-        $voteRepository->findOneVoteByVoteIdAndVoterId($voteId);
-        $voteService->deleteVote($voteId, $voteRepository);
+        //$vote = $entityManager->getRepository('App\Entity\Vote')->findOneBy(['voter' => $voter, 'id' => $voteId]);
+
+
+        if (is_null($vote))
+        {
+            return new JsonResponse(
+                'Suppression du vote impossible',
+                401,
+                [],
+                true
+            );
+        }
+
+       // $voteService->deleteVote($voteId, $voteRepository);
+
+       // dd($vote);
+        $voter->removeVote($vote);
+      //  dd($vote);
+        $entityManager->flush();
 
 
         return new JsonResponse('Vote supprimé', 200, [], true);
@@ -175,6 +195,53 @@ class MovieController extends AbstractController
 
 
     }
+
+    /**
+     * @Rest\Post("/movies/current-week", name="current-week")
+     * @param VoteService $voteService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function displayWeekNumbers(VoteService $voteService)
+    {
+         $currentWeek = $voteService->currentWeekNum();
+
+       // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
+
+
+
+        dd($currentWeek);
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Rest\Post("/movies/lastmonday", name="lastmonday")
+     * @param VoteService $voteService
+     * @return JsonResponse
+     */
+    public function displayLastMonday(VoteService $voteService)
+    {
+        $currentWeek = $voteService->firstDayOfWeek();
+
+        // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
+
+
+
+        dd($currentWeek);
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Rest\Post("/movies/comparaison", name="comparaison")
+     * @return void
+     */
+    public function checkDateOnBdd()
+    {
+
+    }
+
 
 //    // methode non appelée
 //    /**
