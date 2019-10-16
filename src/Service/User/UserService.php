@@ -45,15 +45,11 @@ class UserService
     /**
      * @param Request $request
      * @param ValidatorInterface $validator
-     * @param EntityManagerInterface $entityManager
      * @return User|string
      * @throws \Exception
      */
-    public function addUser(Request $request, ValidatorInterface $validator, \Doctrine\ORM\EntityManagerInterface $entityManager)
+    public function addUser(Request $request, ValidatorInterface $validator)
     {
-
-        $serializer = new CustomUserSerializer();
-
         $user = new User();
 
         //Here, without Symfony's Form (see HOC2019_GIFTS-LB for Symfony Form Use)
@@ -87,11 +83,7 @@ class UserService
             return $errorsString;
         }
 
-        /* you can fetch the EntityManager via $this->getDoctrine()->getManager() or you can add an argument to the action: addUser(EntityManagerInterface $entityManager)
-        */
-        // tell Doctrine you want to (eventually) save the user (no queries yet)
         $this->entityManager->persist($user);
-        // actually executes the queries (i.e. the INSERT query)
         $this->entityManager->flush();
 
         return $user;
@@ -103,19 +95,12 @@ class UserService
      */
     public function removeUser($id)
     {
-        // $removeUser = $userId->remove($userId);
-//  ????????
-
         $connectedUser = $this->userRepository->find($id);
-
-        // dd($userId);
 
         $this->entityManager->remove($connectedUser);
         $this->entityManager->flush();
 
         return $connectedUser;
-        // return $this->redirectToRoute('accueil');
-
     }
 
 

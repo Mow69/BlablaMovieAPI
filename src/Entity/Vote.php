@@ -40,16 +40,26 @@ class Vote
      */
     private $movie_id;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return User|null
+     */
     public function getVoter(): ?User
     {
         return $this->voter;
     }
 
+    /**
+     * @param User|null $voter
+     * @return $this
+     */
     public function setVoter(?User $voter): self
     {
         $this->voter = $voter;
@@ -57,6 +67,9 @@ class Vote
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getVoteDate(): ?\DateTimeInterface
     {
         return $this->vote_date;
@@ -69,11 +82,18 @@ class Vote
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getMovieId(): ?string
     {
         return $this->movie_id;
     }
 
+    /**
+     * @param string $movie_id
+     * @return $this
+     */
     public function setMovieId(string $movie_id): self
     {
         $this->movie_id = $movie_id;

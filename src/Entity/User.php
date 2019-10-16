@@ -5,12 +5,9 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinTable;
-use Doctrine\ORM\Mapping\ManyToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -19,11 +16,6 @@ class User implements UserInterface
 {
     const SERIALIZE_SELF = "User::GROUP_SELF";
     const SERIALIZE_VOTES = "User::GROUP_VOTES";
-//      Vérifie que l'adresse email entrée est bien valide (existe bien)
-//    public static function loadValidatorMetadata(ClassMetadata $metadata)
-//    {
-//        $metadata->addPropertyConstraint('mail', new Assert\Valid());
-//    }
 
     /**
      * @ORM\Id()
@@ -109,22 +101,34 @@ class User implements UserInterface
     private $votes;
 
 
-
+    /**
+     * User constructor.
+     */
     public function __construct() {
         $this->movies = new ArrayCollection();
         $this->votes = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getLogin(): ?string
     {
         return $this->login;
     }
 
+    /**
+     * @param string $login
+     * @return $this
+     */
     public function setLogin(string $login): self
     {
         $this->login = $login;
@@ -169,6 +173,10 @@ class User implements UserInterface
         return (string) $this->password;
     }
 
+    /**
+     * @param string $password
+     * @return $this
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -193,11 +201,18 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getMail(): ?string
     {
         return $this->mail;
     }
 
+    /**
+     * @param string $mail
+     * @return $this
+     */
     public function setMail(string $mail): self
     {
         $this->mail = $mail;
@@ -205,11 +220,18 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birth_date;
     }
 
+    /**
+     * @param \DateTimeInterface $birth_date
+     * @return $this
+     */
     public function setBirthDate(\DateTimeInterface $birth_date): self
     {
         $this->birth_date = $birth_date;
@@ -217,11 +239,18 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getInscriptionDate(): ?\DateTimeInterface
     {
         return $this->inscription_date;
     }
 
+    /**
+     * @param \DateTimeInterface $inscription_date
+     * @return $this
+     */
     public function setInscriptionDate(\DateTimeInterface $inscription_date): self
     {
         $this->inscription_date = $inscription_date;

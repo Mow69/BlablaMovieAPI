@@ -3,13 +3,14 @@
 
 namespace App\Service\Vote;
 
+use App\Entity\User;
 use App\Entity\Vote;
 use App\Repository\VoteRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -25,18 +26,24 @@ class VoteService
      */
     private $entityManager;
 
+    /**
+     * @var
+     */
+    private $serializer;
+
 
     /**
      * VoteService constructor.
      * @param ValidatorInterface $validator
      * @param EntityManagerInterface $entityManager
+     * @param SerializerInterface $serializer
      */
-    public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager)
+    public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
         $this->validator = $validator;
         $this->entityManager = $entityManager;
+        $serializer->serializer = $serializer;
     }
-
 
     ////// VOTE Methods :
 
@@ -63,13 +70,10 @@ class VoteService
             return $errorsString;
         }
 
-
         $this->entityManager->persist($vote);
         $this->entityManager->flush();
 
         return $vote;
-
-
     }
 
     /**
@@ -80,10 +84,7 @@ class VoteService
     public function deleteAllVotesForCurrentUser(UserInterface $currentUser, VoteRepository $voteRepository)
     {
         $currentUserId = $currentUser->getId();
-
         $getVotesOfCurrentUser = $voteRepository->findByVoterId($currentUserId);
-
-        // dd($getVotesOfCurrentUser);
 
         foreach ($getVotesOfCurrentUser as $voteItem) {
             $this->entityManager->remove($voteItem);
@@ -91,12 +92,10 @@ class VoteService
         }
 
         return $getVotesOfCurrentUser;
-
     }
 
 
     ////// DATE Methods :
-
 
     /**
      * @return false|string
@@ -104,24 +103,11 @@ class VoteService
      */
     public function currentWeekNum()
     {
-        //$weekNum = count(day);
-
-//        $month = 10;
-//        $year = 2019;
-//        echo "Week #'s in October 2019: ";
-//        $week_num_correction = strftime('%U', mktime(0, 0, 0, 1, 1, $year)) === '00' ? 1 : 0;
-//        $week_numbers = range(strftime('%U', mktime(0, 0, 0, $month, 1, $year)) + $week_num_correction, strftime('%U', mktime(0, 0, 0, $month + 1, 0, $year)) + $week_num_correction);
-//        foreach ($week_numbers as $week_number) return $week_number;
-
-        //$date = date('W',('19-01-01'));
-      //  $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
-
         $date = new DateTime();
         $formated_date = $date->format('Y-m-d');
         $dateStrToTime = strtotime($formated_date);
         $ourWeekNum = date('W', $dateStrToTime);
-        $ourDayNumOfWeek = date('w', $dateStrToTime);
-        
+
         return $ourWeekNum;
     }
 
@@ -131,8 +117,6 @@ class VoteService
      */
     public function currentDayNumOfWeek()
     {
-
-
         $date = new DateTime();
         $formated_date = $date->format('Y-m-d');
         $dateStrToTime = strtotime($formated_date);
@@ -141,103 +125,28 @@ class VoteService
         return $ourDayNumOfWeek;
     }
 
+    /**
+     * @return false|string
+     */
     public function firstDayOfWeek()
     {
-//        $date = new DateTime();
-//        $formated_date = $date->format('Y-m-d');
-
-
         $day = date('w');
-
         $firstDay = date('Y-m-d', strtotime('+'.(1-$day).'day'));
-        $lastdDay = date('Y-m-d', strtotime('+'.(7-$day).'day'));
-
+        // $lastdDay = date('Y-m-d', strtotime('+'.(7-$day).'day'));
 
         return $firstDay;
     }
 
-    public function dayComparaison()
+    /**
+     * @param VoteService $voteService
+     * @param VoteRepository $voteRepository
+     * @return mixed
+     */
+    public function checkVotesOfCurrentWeekOnBdd(VoteService $voteService, VoteRepository $voteRepository)
     {
-        $firstDayOfWeek = $this->firstDayOfWeek();
+        $firstDay = $voteService->firstDayOfWeek();
+        $currentVotes = $voteRepository->findVotesByDateCurrentWeek($firstDay);
 
-        $dateTime = new DateTime();
-        $currentDayNumOfWeek = $this->currentDayNumOfWeek();
-
-        $comparaisonDaysNumBtwNowAndMonday = ($firstDayOfWeek - $currentDayNumOfWeek);
-
-        if($comparaisonDaysNumBtwNowAndMonday > 1)
-        {
-
-        };
-
+        return $currentVotes;
     }
-
-
-//      Méthode non utilisée car le Controller appelle une méthode du Repository
-//    /**
-//     * @param int $voteId
-//     * @param int $voterId
-//     * @param VoteRepository $voteRepository
-//     * @return Vote|null
-//     * @throws NonUniqueResultException
-//     */
-//    public function deleteVote(int $voteId, int $voterId, VoteRepository $voteRepository)
-//    {
-//        $vote = $voteRepository->findOneVoteByVoteIdAndVoterId($voteId, $voterId);
-//
-//
-//        $this->entityManager->remove($vote);
-//        $this->entityManager->flush();
-//
-//        return $vote;
-//    }
-
-//    public function getCurrentVotes(Request $request)
-//    {
-//        $currentVote = $request->request(vote_id);
-//    }
-
-
-//    public function removeVote($existingVote, EntityManagerInterface $entityManager, ManagerRegistry $registry)
-//    {
-//        $vote = $existingVote->getVote();
-//
-//        // $removeUser = $userId->remove($userId);
-////  ????????
-//        $voteRepo = new VoteRepository($registry);
-//
-//        $existingVote = $voteRepo->find($vote);
-//
-//        // dd($userId);
-//
-//        $entityManager->remove($existingVote);
-//        $entityManager->flush();
-//
-//        return $existingVote;
-//        // return $this->redirectToRoute('accueil');
-
-//    }
-
-
-// methode non appelée
-//    public function voteAction(EntityManagerInterface $entityManager)
-//    {
-//        $vote = new Vote();
-//
-//        $vote->setVoteDate(new \Datetime("2017-03-03T09:00:00Z"));
-//
-//        $movieRepo = $entityManager->getRepository(Movie::class);
-//        $movie_id = $movieRepo->find(id);
-//
-//        $userRepo = $entityManager->getRepository(User::class);
-//        $user = $userRepo->find(id);
-//
-//        $vote->setUser($user);
-//        $vote->setMovie($movie_id);
-//
-//        $entityManager->persist($vote);
-//        $entityManager->flush();
-//
-//        return $vote;
-//    }
 }

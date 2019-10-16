@@ -77,11 +77,10 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager)
     {
         $userService = new UserService($passwordEncoder, $userRepository, $entityManager);
-        $addUser = $userService->addUser($request, $validator, $entityManager);
+        $addUser = $userService->addUser($request, $validator);
 
         return new JsonResponse($this->serializer->serialize($addUser, 'json'), 200, [], true);
     }
-
 
     /**
      * @Rest\Delete("/users/delete", name="delete_user")
@@ -107,47 +106,4 @@ class UserController extends AbstractController
         return new JsonResponse($this->serializer->serialize($removeUser, 'json'), 200, [], true);
 
     }
-
-
-
-
-
-
-//    /**
-//     * @Rest\Post("/votes/delete", name="delete_votes")
-//     * @return JsonResponse
-//     */
-//    public function deleteAllVotesForCurrentUser()
-//    {
-//        $currentUser = $this->getUser();
-//        $currentUserId = $currentUser->getId();
-//
-//        $getVotesOfCurrentUser = $this->voteRepository->findByVoterId($currentUserId);
-//
-//        // dd($getVotesOfCurrentUser);
-//
-//        foreach ($getVotesOfCurrentUser as $voteItem)
-//        {
-//            $this->entityManager->remove($voteItem);
-//            $this->entityManager->flush();
-//        }
-//
-//        return new JsonResponse($this->serializer->serialize($getVotesOfCurrentUser, 'json'), 200, [], true);
-//
-//    }
-
-
-//    /**
-//     * @Rest\Get("/users", name="users_list")
-//     * @param UserRepository $userRepository
-//     * @return JsonResponse
-//     *
-//     */
-//    public function getAllUsers(UserRepository $userRepository)
-//    {
-//        $allUsersArray = $userRepository->findAll();
-//        return new JsonResponse($this->serializer->serialize($allUsersArray, 'json'));
-//    }
-
-
 }
