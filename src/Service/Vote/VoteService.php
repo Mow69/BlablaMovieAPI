@@ -37,6 +37,9 @@ class VoteService
         $this->entityManager = $entityManager;
     }
 
+
+    ////// VOTE Methods :
+
     /**
      * @param $connectedUser
      * @param $imdbID
@@ -90,6 +93,9 @@ class VoteService
         return $getVotesOfCurrentUser;
 
     }
+
+
+    ////// DATE Methods :
 
 
     /**

@@ -162,8 +162,7 @@ class MovieController extends AbstractController
         //$vote = $entityManager->getRepository('App\Entity\Vote')->findOneBy(['voter' => $voter, 'id' => $voteId]);
 
 
-        if (is_null($vote))
-        {
+        if (is_null($vote)) {
             return new JsonResponse(
                 'Suppression du vote impossible',
                 401,
@@ -172,11 +171,11 @@ class MovieController extends AbstractController
             );
         }
 
-       // $voteService->deleteVote($voteId, $voteRepository);
+        // $voteService->deleteVote($voteId, $voteRepository);
 
-       // dd($vote);
+        // dd($vote);
         $voter->removeVote($vote);
-      //  dd($vote);
+        //  dd($vote);
         $entityManager->flush();
 
 
@@ -196,49 +195,62 @@ class MovieController extends AbstractController
 
     }
 
+
+    // FONCTIONS CREEE JUSTE POUR TESTER DES SERVICES DANS LE CONTROLLER VIA POSTMAN, A EFFACER
+//    /**
+//     * @Rest\Post("/movies/current-week", name="current-week")
+//     * @param VoteService $voteService
+//     * @return JsonResponse
+//     * @throws \Exception
+//     */
+//    public function displayWeekNumbers(VoteService $voteService)
+//    {
+//         $currentWeek = $voteService->currentWeekNum();
+//
+//       // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
+//
+//
+//        return new JsonResponse($currentWeek);
+//    }
+//
+//    /**
+//     * @Rest\Post("/movies/lastmonday", name="lastmonday")
+//     * @param VoteService $voteService
+//     * @return JsonResponse
+//     */
+//    public function displayLastMonday(VoteService $voteService)
+//    {
+//        $currentWeek = $voteService->firstDayOfWeek();
+//
+//        // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
+//
+//        return new JsonResponse($currentWeek);
+//    }
+
     /**
-     * @Rest\Post("/movies/current-week", name="current-week")
+     * @Rest\Post("/movies/votes/current_week", name="current_week_votes")
      * @param VoteService $voteService
-     * @return JsonResponse
-     * @throws \Exception
-     */
-    public function displayWeekNumbers(VoteService $voteService)
-    {
-         $currentWeek = $voteService->currentWeekNum();
-
-       // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
-
-
-
-        dd($currentWeek);
-
-        return new JsonResponse();
-    }
-
-    /**
-     * @Rest\Post("/movies/lastmonday", name="lastmonday")
-     * @param VoteService $voteService
+     * @param VoteRepository $voteRepository
      * @return JsonResponse
      */
-    public function displayLastMonday(VoteService $voteService)
+    public function checkVotesOfCurrentWeekOnBdd(VoteService $voteService, VoteRepository $voteRepository)
     {
-        $currentWeek = $voteService->firstDayOfWeek();
+        $firstDay = $voteService->firstDayOfWeek();
+        $currentVotes = $voteRepository->findVotesByDateCurrentWeek($firstDay);
 
-        // $nowUtc->setTimezone( new \DateTimeZone( 'Australia/Sydney' ) );
-
-
-
-        dd($currentWeek);
-
-        return new JsonResponse();
-    }
-
-    /**
-     * @Rest\Post("/movies/comparaison", name="comparaison")
-     * @return void
-     */
-    public function checkDateOnBdd()
-    {
+        return new JsonResponse(($this->serializer->serialize($currentVotes, "json", [
+                "groups" => [
+                    Vote::SERIALIZE_SELF,
+                    Vote::SERIALIZE_VOTER,
+                    User::SERIALIZE_SELF,
+                ]
+            ]
+        )
+        ),
+            200,
+            [],
+            true
+        );
 
     }
 

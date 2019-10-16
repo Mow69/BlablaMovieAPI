@@ -54,6 +54,22 @@ class VoteRepository extends ServiceEntityRepository
                 ->getOneOrNullResult();
     }
 
+    /**
+     * @param $date
+     * @return mixed
+     */
+    public function findVotesByDateCurrentWeek($date)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.vote_date >= DATE(:date)')
+            ->setParameter('date', $date)
+            ->orderBy('v.vote_date', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 
 //     /**
 //      * @return Vote[] Returns an array of Vote objects

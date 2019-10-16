@@ -6,6 +6,8 @@
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
+        "beberlei/doctrineextensions": "^1.2",
         "doctrine/annotations": "^1.7",
         "friendsofsymfony/rest-bundle": "^2.5",
         "jms/serializer-bundle": "^3.4",
@@ -33,10 +35,7 @@
         "symfony/validator": "4.3.*",
         "symfony/web-link": "4.3.*",
         "symfony/web-server-bundle": "4.3.*",
-        "symfony/yaml": "4.3.*",
-        "ext-http": "*",
-      "ext-cassandra": "*",
-      "ext-json": "*"
+        "symfony/yaml": "4.3.*"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
