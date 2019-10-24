@@ -98,12 +98,11 @@ class UserController extends AbstractController
         //        $userId = $currentUser->getId();
         // $deleteVotes = $voteService->deleteAllVotesForCurrentUser($this->voteRepository);
 
-        $voteService->deleteAllVotesForCurrentUser($currentUser, $this->voteRepository);
+       // $voteService->deleteAllVotesForCurrentUser($currentUser, $this->voteRepository);
 
 
         $removeUser = $userService->removeUser($user);
         //dd($removeUser);
-        return new JsonResponse($this->serializer->serialize($removeUser, 'json'), 200, [], true);
-
+        return new JsonResponse(null, 204, [], true);
     }
 }

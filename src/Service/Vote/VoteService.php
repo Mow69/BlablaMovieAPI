@@ -76,23 +76,24 @@ class VoteService
         return $vote;
     }
 
-    /**
-     * @param UserInterface $currentUser
-     * @param VoteRepository $voteRepository
-     * @return Vote[]
-     */
-    public function deleteAllVotesForCurrentUser(UserInterface $currentUser, VoteRepository $voteRepository)
-    {
-        $currentUserId = $currentUser->getId();
-        $getVotesOfCurrentUser = $voteRepository->findByVoterId($currentUserId);
-
-        foreach ($getVotesOfCurrentUser as $voteItem) {
-            $this->entityManager->remove($voteItem);
-            $this->entityManager->flush();
-        }
-
-        return $getVotesOfCurrentUser;
-    }
+    // METHODE INUTILISEE DEPUIS L'AJOUT DE L ANNOTATION CASCADE SUR L'ATTRIBUT VOTE DANS USER ENTITY
+//    /**
+//     * @param UserInterface $currentUser
+//     * @param VoteRepository $voteRepository
+//     * @return Vote[]
+//     */
+//    public function deleteAllVotesForCurrentUser(UserInterface $currentUser, VoteRepository $voteRepository)
+//    {
+//        $currentUserId = $currentUser->getId();
+//        $getVotesOfCurrentUser = $voteRepository->findByVoterId($currentUserId);
+//
+//        foreach ($getVotesOfCurrentUser as $voteItem) {
+//            $this->entityManager->remove($voteItem);
+//            $this->entityManager->flush();
+//        }
+//
+//        return $getVotesOfCurrentUser;
+//    }
 
 
     ////// DATE Methods :

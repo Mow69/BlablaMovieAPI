@@ -95,7 +95,7 @@ class User implements UserInterface
     private $inscription_date;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="voter", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="voter", orphanRemoval=true, cascade={"persist", "remove"})
      * @Groups({"User::GROUP_VOTES"})
      */
     private $votes;
