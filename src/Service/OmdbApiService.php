@@ -10,8 +10,24 @@ class OmdbApiService
      */
     public function getAllSpaceMovies()
     {
-        return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7");
+        return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7&type=movie");
     }
+
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getPlotMovieByID($id)
+    {
+        $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&type=movie&plot=full&i=" . $id);
+        $responseJSON = json_decode($response, true);
+        $plot = $responseJSON['Plot'];
+        return $plot;
+
+
+    }
+
 
     /**
      * @param $id
@@ -19,7 +35,7 @@ class OmdbApiService
      */
     public function checkIfAMovieExistsById($id)
     {
-        $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&i=" . $id);
+        $response = $this->callAPI("GET", "http://www.omdbapi.com/?apikey=ceda12d7&type=movie&i=" . $id);
         $responseJSON = json_decode($response, true);
         $exists = $responseJSON['Response'] == 'True' ? true : false;
         return $exists;

@@ -30,7 +30,7 @@ class MovieController extends AbstractController
      */
     private $request;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, Request $request)
     {
         $this->serializer = $serializer;
     }
@@ -47,6 +47,19 @@ class MovieController extends AbstractController
         return new JsonResponse($moviesData, 200, [], true);
     }
 
+    /**
+     * @Rest\Get("/movies/plot", name="plot")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fullPlot(Request $request)
+    {
+        $ombdservice = new OmdbApiService();
+        $imdbID = $request->request->get('imdbID');
+        $moviePlot = $ombdservice->getPlotMovieByID($imdbID);
+        return new JsonResponse($moviePlot, 200, [], true);
+
+    }
 
     /**
      * @Rest\Post("/movies/vote", name="voted_movies")
