@@ -25,12 +25,8 @@ class MovieController extends AbstractController
      */
     private $serializer;
 
-    /**
-     * @var
-     */
-    private $request;
 
-    public function __construct(SerializerInterface $serializer, Request $request)
+    public function __construct(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
     }
@@ -55,14 +51,15 @@ class MovieController extends AbstractController
     public function moviesByPagination(Request $request)
     {
         $ombdservice = new OmdbApiService();
-        $page = $request->request->get('Page');
+//        TODO: remplacer PAGE par qqc qui existe
+        $page = $request->request->get('page');
         $moviesData = $ombdservice->getAllSpaceMoviesByPage($page);
 
         return new JsonResponse($moviesData, 200, [], true);
     }
 
     /**
-     * @Rest\Get("/movies/plot", name="plot")
+     * @Rest\Get("/movies/{id}/plot", name="plot")
      * @param Request $request
      * @return JsonResponse
      */
@@ -179,4 +176,32 @@ class MovieController extends AbstractController
         $entityManager->flush();
         return new JsonResponse('Vote supprimé', 200, [], true);
     }
+
+//    /**
+//     * @param $page
+//     * @return array
+//     */
+//    public function indexAction($page)
+//    {
+//        $nbArticlesParPage = $this->container->getParameter('front_nb_articles_par_page');
+//
+//        $em = $this->getDoctrine()->getManager();
+//
+//        $articles = $em->getRepository('XxxYyyBundle:Article')
+//            ->findAllPagineEtTrie($page, $nbArticlesParPage);
+//
+//        $pagination = array(
+//            'page' => $page,
+//            'nbPages' => ceil(count($articles) / $nbArticlesParPage),
+//            'nomRoute' => 'front_articles_index',
+//            'paramsRoute' => array()
+//        );
+//
+//        return array(
+//            'articles' => $articles,
+//            'pagination' => $pagination
+//        );
+//    }
+
+
 }
