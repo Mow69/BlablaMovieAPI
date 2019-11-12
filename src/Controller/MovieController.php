@@ -48,6 +48,20 @@ class MovieController extends AbstractController
     }
 
     /**
+     * @Rest\Get("/movies/{page}", name="movies_page")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function moviesByPagination(Request $request)
+    {
+        $ombdservice = new OmdbApiService();
+        $page = $request->request->get('Page');
+        $moviesData = $ombdservice->getAllSpaceMoviesByPage($page);
+
+        return new JsonResponse($moviesData, 200, [], true);
+    }
+
+    /**
      * @Rest\Get("/movies/plot", name="plot")
      * @param Request $request
      * @return JsonResponse
@@ -60,6 +74,8 @@ class MovieController extends AbstractController
         return new JsonResponse($moviePlot, 200, [], true);
 
     }
+
+
 
     /**
      * @Rest\Post("/movies/vote", name="voted_movies")

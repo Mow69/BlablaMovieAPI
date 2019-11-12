@@ -13,6 +13,14 @@ class OmdbApiService
         return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7&type=movie");
     }
 
+    /**
+     * @param $page
+     * @return bool|string
+     */
+    public function getAllSpaceMoviesByPage($page)
+    {
+        return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7&type=movie&page" . $page);
+    }
 
     /**
      * @param $id
