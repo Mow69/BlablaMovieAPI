@@ -52,10 +52,31 @@ class MovieController extends AbstractController
     {
         $ombdservice = new OmdbApiService();
 //        TODO: remplacer PAGE par qqc qui existe
-        $page = $request->request->get('page');
-        $moviesData = $ombdservice->getAllSpaceMoviesByPage($page);
+        $pageApp = $request->get('page');
+        $nbPageOmdb = 5;
+        $maxPageOmdb = $pageApp * $nbPageOmdb;
+        $minPageOmdb = (($pageApp-1) * $nbPageOmdb) + 1;
 
-        return new JsonResponse($moviesData, 200, [], true);
+        $search = [];
+        $totalResults = 0;
+        for($i=$minPageOmdb; $i<=$maxPageOmdb; $i++){
+            $moviesData = json_decode($ombdservice->getAllSpaceMoviesByPage($i), true);
+            if($moviesData['Response'] == 'True'){
+                $totalResults = $moviesData['totalResults'];
+                $search = array_merge($search, $moviesData['Search']);
+            }
+        }
+
+        $response = [
+            'Search' => $search,
+            'totalResults' => $totalResults,
+            'Response' => 'True',
+            'elementsPerPage' => $nbPageOmdb * 10
+        ];
+
+        $responseJSON = json_encode($response);
+
+        return new JsonResponse($responseJSON, 200, [], true);
     }
 
     /**

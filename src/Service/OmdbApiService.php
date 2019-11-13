@@ -19,7 +19,7 @@ class OmdbApiService
      */
     public function getAllSpaceMoviesByPage($page)
     {
-        return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7&type=movie&page" . $page);
+        return $this->callAPI("GET", "http://www.omdbapi.com/?s=space&apikey=ceda12d7&type=movie&page=" . $page);
     }
 
     /**
