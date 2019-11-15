@@ -48,19 +48,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Using Symfony's Form
-     * Create a form in order to create a new User
-     * @param $user
-     * @return FormInterface
-     */
-    public function createFormNewUser($user)
-    {
-        $form = $this->createForm(Usertype::class, $user);
-        return $form;
-    }
-
-    /**
-     * @Rest\Post("/users/add", name="add_user")
+     * @Rest\Post("/users", name="add_user")
      * @param Request $request
      * @param ValidatorInterface $validator
      * @param UserPasswordEncoderInterface $passwordEncoder
@@ -69,7 +57,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function createNewUser(
+    public function postUserAction(
         Request $request,
         ValidatorInterface $validator,
         UserPasswordEncoderInterface $passwordEncoder,
@@ -83,7 +71,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Rest\Delete("/users/delete", name="delete_user")
+     * @Rest\Delete("/users", name="delete_user")
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param UserRepository $userRepository
      * @param EntityManagerInterface $entityManager
@@ -91,7 +79,7 @@ class UserController extends AbstractController
      * @param UserInterface $currentUser
      * @return JsonResponse
      */
-    public function deleteUser(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, EntityManagerInterface $entityManager, VoteService $voteService, UserInterface $currentUser)
+    public function deleteUserAction(UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, EntityManagerInterface $entityManager, VoteService $voteService, UserInterface $currentUser)
     {
         $userService = new UserService($passwordEncoder, $userRepository, $entityManager);
         $user = $this->getUser();

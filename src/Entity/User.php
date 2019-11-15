@@ -21,7 +21,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"User::GROUP_SELF"})
+     * @Groups({"User::GROUP_SELF", "auth-tokens"})
      */
     private $id;
 
@@ -69,7 +69,7 @@ class User implements UserInterface
      * @Assert\NotBlank(message="The email must be defined.")
      * @Assert\NotNull(message="The email can't be null.")
      * @Assert\Email(message="The email '{{ value }}' is not a valid email.")
-     * @Groups({"User::GROUP_SELF"})
+     * @Groups({"User::GROUP_SELF", "auth-tokens"})
      */
     private $mail;
 

@@ -33,26 +33,15 @@ class MovieController extends AbstractController
 
     /**
      * @Rest\Get("/movies", name="movies_list")
-     * @return JsonResponse
-     */
-    public function getMoviesList()
-    {
-        $ombdservice = new OmdbApiService();
-        $moviesData = $ombdservice->getAllSpaceMovies();
-
-        return new JsonResponse($moviesData, 200, [], true);
-    }
-
-    /**
-     * @Rest\Get("/movies/{page}", name="movies_page")
      * @param Request $request
      * @return JsonResponse
      */
-    public function moviesByPagination(Request $request)
+    public function getMoviesAction(Request $request)
     {
         $ombdservice = new OmdbApiService();
 //        TODO: remplacer PAGE par qqc qui existe
-        $pageApp = $request->get('page');
+        $pageApp = $request->query->get('page');
+        $pageApp = ($pageApp)?$pageApp:1;
         $nbPageOmdb = 5;
         $maxPageOmdb = $pageApp * $nbPageOmdb;
         $minPageOmdb = (($pageApp-1) * $nbPageOmdb) + 1;
@@ -80,11 +69,11 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Rest\Get("/movies/{id}/plot", name="plot")
+     * @Rest\Get("/movies/{id}", name="movie_detail")
      * @param Request $request
      * @return JsonResponse
      */
-    public function fullPlot(Request $request)
+    public function getMoviesByIdAction(Request $request)
     {
         $ombdservice = new OmdbApiService();
         $imdbID = $request->request->get('imdbID');
@@ -96,7 +85,7 @@ class MovieController extends AbstractController
 
 
     /**
-     * @Rest\Post("/movies/vote", name="voted_movies")
+     * @Rest\Post("/vote", name="voted_movies")
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      * @param ValidatorInterface $validator
@@ -105,7 +94,7 @@ class MovieController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function voteAction(EntityManagerInterface $entityManager, Request $request, ValidatorInterface $validator, VoteService $voteService, VoteRepository $voteRepository)
+    public function postVoteAction(EntityManagerInterface $entityManager, Request $request, ValidatorInterface $validator, VoteService $voteService, VoteRepository $voteRepository)
     {
         $connectedUser = $this->getUser();
         //$votes = $connectedUser->getVotes();
@@ -170,14 +159,14 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Rest\Delete("/movies/vote-delete", name="delete_vote")
+     * @Rest\Delete("/vote", name="delete_vote")
      * @param Request $request
      * @param VoteRepository $voteRepository
      * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      * @throws NonUniqueResultException
      */
-    public function removeVote(Request $request, VoteRepository $voteRepository, EntityManagerInterface $entityManager)
+    public function deleteVoteAction(Request $request, VoteRepository $voteRepository, EntityManagerInterface $entityManager)
     {
         $voteId = $request->headers->get('id');
         $voter = $this->getUser();
