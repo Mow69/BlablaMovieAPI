@@ -92,7 +92,16 @@ class SecurityController extends AbstractController
         $em->persist($authToken);
         $em->flush();
 
-        return new JsonResponse(json_decode($this->serializer->serialize($authToken, 'json', ['groups' => 'auth-tokens'])));
+        return new JsonResponse(
+            json_decode(
+                $this->serializer->serialize(
+                    $authToken,
+                    'json',
+                    ['groups' => 'auth-tokens'
+                    ]
+                )
+            )
+        );
     }
 
     /**

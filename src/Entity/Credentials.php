@@ -16,8 +16,8 @@ class Credentials
     protected $login;
 
     /**
-     * @Assert\NotBlank(message="The login must be defined.")
-     * @Assert\NotNull(message="The login can't be null.")
+     * @Assert\NotBlank(message="The password must be defined.")
+     * @Assert\NotNull(message="The password can't be null.")
      * @Assert\Type(
      *     "string",
      *     message="The value {{ value }} is not a valid {{ type }}.")
