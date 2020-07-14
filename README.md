@@ -1,6 +1,7 @@
 # BlablaMovieAPI
 
 This repository is the back-end part of : https://github.com/Mow69/BlablamovieApplication.
+(Thanks to the omdbapi owners to let me use their API from http://www.omdbapi.com/.)
 
 Installation
 ------------
